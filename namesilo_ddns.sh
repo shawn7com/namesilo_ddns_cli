@@ -260,6 +260,17 @@ fetch_records()
             continue
         elif [[ ${TAG:0:1} == "/" ]]; then   ## node end
             if [[ $XPATH == "//namesilo/reply/resource_record" ]]; then
+                local HOST_RAW="${HOST:-}"
+                HOST_RAW="${HOST_RAW%.}"
+                if [[ -z $HOST_RAW || $HOST_RAW == "@" ]]; then
+                    HOST="$DOMAIN"
+                elif [[ $HOST_RAW == "$DOMAIN" ]]; then
+                    HOST="$DOMAIN"
+                elif [[ $HOST_RAW == *".${DOMAIN}" ]]; then
+                    HOST="$HOST_RAW"
+                else
+                    HOST="${HOST_RAW}.${DOMAIN}"
+                fi
                 FETCHED+=("${ID:-}|${TYPE:-}|${HOST:-}|${VALUE:-}|${TTL:-}|${FAIL:-0}")
                 unset ID TYPE HOST VALUE TTL FAIL
             fi
